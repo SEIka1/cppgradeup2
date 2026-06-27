@@ -1,0 +1,35 @@
+name: Manual Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      tasks:
+        description: "Optional comma-separated task dirs, for example: almar/taske1,almar/taskm4. Empty means all tasks."
+        required: false
+        type: string
+        default: ""
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake ninja-build g++
+
+      - name: Build selected tasks
+        env:
+          TASK_INPUT: ${{ inputs.tasks }}
+        run: |
+          if [[ -z "$TASK_INPUT" ]]; then
+            .github/scripts/build_tasks.sh
+          else
+            IFS=',' read -ra tasks <<< "$TASK_INPUT"
+            .github/scripts/build_tasks.sh "${tasks[@]}"
+          fi

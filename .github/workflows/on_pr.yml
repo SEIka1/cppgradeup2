@@ -1,0 +1,43 @@
+name: PR Check
+
+on:
+  pull_request:
+
+jobs:
+  changed_tasks:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake ninja-build g++
+
+      - name: Find changed tasks
+        id: changed
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: HEAD
+        run: |
+          mapfile -t tasks < <(.github/scripts/changed_tasks.sh "$BASE_SHA" "$HEAD_SHA")
+          printf 'tasks<<EOF\n' >> "$GITHUB_OUTPUT"
+          printf '%s\n' "${tasks[@]}" >> "$GITHUB_OUTPUT"
+          printf 'EOF\n' >> "$GITHUB_OUTPUT"
+          if [[ ${#tasks[@]} -eq 0 ]]; then
+            echo "No changed task directories under almar/task*."
+          else
+            printf 'Changed tasks:\n'
+            printf ' - %s\n' "${tasks[@]}"
+          fi
+
+      - name: Build and test changed tasks
+        if: steps.changed.outputs.tasks != ''
+        env:
+          CHANGED_TASKS: ${{ steps.changed.outputs.tasks }}
+        run: |
+          mapfile -t tasks <<< "$CHANGED_TASKS"
+          .github/scripts/build_tasks.sh "${tasks[@]}"
