@@ -7,28 +7,35 @@ int main()
 {
     int amount_attempts = 3;
     int const real_key = 123456;
-    int max_key = -1;
-    std::cout << "Write the password to unlock the gallery:" << std::endl;
-    while ((real_key != max_key) && (amount_attempts != 0))
+    unsigned int input_key = 1000000;
+    std::cout << "Write the password (a six-digit code) to unlock the gallery:" << std::endl;
+    while ((real_key != input_key) && (amount_attempts != 0))
     {
-        std::cin >> max_key;
-        amount_attempts--;
-        if (real_key != max_key)
+        std::cin >> input_key;
+        if (input_key < 0 || input_key > 999999)
         {
-            if (amount_attempts == 0)
-            {
-                std::cout << "Gallery is locked.";
-            }
-            else
-            {
-            std::cout << "You have only "<< amount_attempts <<" attempts"  << std::endl;
-            }
+            std::cout << "Invalid passkey. The passkey should contain 6 digits";
+            return 0;
         }
         else
         {
-            std::cout << "Gallery is unlocked. Enjoy." << std::endl;
-        }
+            amount_attempts--;
+            if (real_key != input_key)
+            {
+                if (amount_attempts == 0)
+                {
+                    std::cout << "Gallery is locked.";
+                }
+                else
+                {
+                std::cout << "You have only "<< amount_attempts <<" attempts"  << std::endl;
+                }
+            }
+            else
+            {
+                std::cout << "Gallery is unlocked. Enjoy." << std::endl;
+            }
     }
-    std::cout << "Build Time: " << __TIME__ << '\n';
+    }
     return 0;
 }
