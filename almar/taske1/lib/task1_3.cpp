@@ -16,17 +16,16 @@
 #include <iostream>
 #include <vector>
 #include <string>
-std::vector<int> script_massive;
 std::vector<int> finding_password(unsigned int begin, unsigned int end, unsigned int real_key)
 {
-    int script_key;
-    while (script_key != real_key)
+    std::vector<int> script_massive;
+    for ( unsigned int script_key = end; script_key >= begin; script_key--)
     {
-        --script_key;
         if(script_key == real_key)
-        { 
+        {
             script_massive.push_back(script_key);
             std::cout << "Gallery is unlocked. Enjoy";
+            break;
         }
     }
     std::cout << '\n';
@@ -68,16 +67,26 @@ int main()
         std::cout << "Error: you didn't write 6 digits." << std::endl;
         return 1;
     }
+    if(end < begin)
+    {
+        std::cout << "Error: begining must be less than end of out range." << std::endl;
+    }
     unsigned int begin_int = static_cast<unsigned int>(std::stoul(begin));
     unsigned int end_int = static_cast<unsigned int>(std::stoul(end));
 
-    finding_password(begin_int, end_int, real_key);
-
+    std::vector<int> result_script_massive = finding_password(begin_int, end_int, real_key);
     std::cout << "Check the accuracy of our function: " << '\n';
-    for (int our_key : script_massive)
+
+    for (int our_key : result_script_massive)
     {
-        std::cout << "Our script key: " << our_key << '\n';
-        std::cout << "Our real   key: " << real_key << '\n';
+        if (our_key == real_key)
+        {
+            std::cout << "Our script key: " << our_key << " = " << real_key << " real key" << std::endl; 
+        }
+        else
+        {
+            std::cout << "didn't find :-(";
+        }
     }
     return 0;
 }
