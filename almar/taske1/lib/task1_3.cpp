@@ -85,17 +85,9 @@ int main()
     else
     {
         std::cout << "Check the accuracy of our function: " << '\n';
-    }
-
-    for (int our_key : result_script_massive)
-    {
-        if (our_key == real_key)
+         for (int our_key : result_script_massive)
         {
             std::cout << "Our script key: " << our_key << " = " << real_key << " real key" << std::endl;
-        }
-        else
-        {
-            std::cout << "didn't find :-(";
         }
     }
     return 0;
