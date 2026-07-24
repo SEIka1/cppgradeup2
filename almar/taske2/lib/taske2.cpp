@@ -36,7 +36,7 @@ bool is_prime(unsigned n)
 {
     int max_number = INT_MAX;
     unsigned int amount_of_denominators = 0;
-    unsigned int denom = 0;
+    unsigned int denom = 1;
     if (n < 2)
     {
         throw std::invalid_argument("Number must be more than 2");
@@ -47,26 +47,18 @@ bool is_prime(unsigned n)
         throw std::out_of_range("Too large number to process");
     }
 
-    while (denom <= n)
+    unsigned int limit_n = std::sqrt(n);
+    while (denom <= limit_n)
     {
         denom++;
-        unsigned int prime_result = n%denom;
-        if (prime_result == 0)
+        if (n % denom == 0)
         {
             amount_of_denominators++;
+            break;
         }
     }
 
-    if (amount_of_denominators == 2)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-
-    return 0;
+    return (amount_of_denominators == 0);
 }
 
 int next_prime(unsigned n)
@@ -98,14 +90,29 @@ bool is_twin_prime(unsigned n)
 
 std::vector<int> primes_in_range(int start, int end)
 {
-    std::vector<int> prime_massive;
-    while (start <= end)
+    if (end < 2 || start > end) return {};
+    std::vector<bool> is_prime(end + 1, true);
+    for (int denom_eratosphene = 2; denom_eratosphene <= std::sqrt(end); ++denom_eratosphene)
     {
-
-       int n = start+1;
-       prime_massive.push_back(n);
+        if (is_prime[denom_eratosphene])
+        {
+            int start_multiplicity = std::max(denom_eratosphene * denom_eratosphene, (start + denom_eratosphene - 1) / denom_eratosphene * denom_eratosphene);
+            for (int i = start_multiplicity; i <= end; i += denom_eratosphene)
+            {
+                is_prime[i] = false;
+            }
+        }
     }
 
+    std::vector<int> prime_massive;
+    int true_start = std::max(start, 2);
+    for (int i = true_start; i <= end; ++i)
+    {
+        if (is_prime[i])
+        {
+            prime_massive.push_back(i);
+        }
+    }
     return prime_massive;
 }
 
@@ -135,10 +142,17 @@ int main()
         std::cout << "enter a range of prime numbers: ";
         std::cin >> start >> end;
         std::vector<int> result_primes_in_range = primes_in_range(start, end);
-        for(int prime_value : result_primes_in_range)
+        std::cout << "prime numbers from the range:\n";
+        std::cout << '[';
+        for(int prime_value = 0; prime_value< result_primes_in_range.size(); ++prime_value)
         {
-            std::cout << prime_value << " ";
+            std::cout << result_primes_in_range[prime_value];
+            if (prime_value < result_primes_in_range.size() - 1)
+            {
+                std::cout << ", ";
+            }
         }
+        std::cout << ']';
     }
     catch(const std::invalid_argument& e)
     {
