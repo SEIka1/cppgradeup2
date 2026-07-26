@@ -34,7 +34,7 @@
 
 bool is_prime(unsigned n)
 {
-    int max_number = INT_MAX;
+    int max_number = INT_MAX - 18;
     unsigned int amount_of_denominators = 0;
     unsigned int denom = 1;
     if (n < 2)
@@ -42,7 +42,7 @@ bool is_prime(unsigned n)
         throw std::invalid_argument("Number must be more than 2");
     }
 
-    if (n > max_number-18)
+    if (n > max_number)
     {
         throw std::out_of_range("Too large number to process");
     }
@@ -64,33 +64,39 @@ bool is_prime(unsigned n)
 int next_prime(unsigned n)
 {
     bool result_is_prime = is_prime(n);
-    if (result_is_prime = true)
+    if (result_is_prime)
     {
-        unsigned int next_prime_number = n+1;
-        while (is_prime(next_prime_number) != true)
+        unsigned int next_prime_number = n+2;
+        while (!is_prime(next_prime_number))
         {
             next_prime_number++;
         }
         std::cout << "next prime: " << next_prime_number << '\n';
         return next_prime_number;
     }
-
+    else
+    {
+        std::cout << "There is no next prime number for this :(\n";
+    }
     return 0;
 }
 
 bool is_twin_prime(unsigned n)
 {
-    if (is_prime(n) != true)
+    if (!is_prime(n))
     {
         throw std::invalid_argument("Don't work with non-prime number");
     }
 
-    return (is_prime(n) == true && is_prime(n+2) == true);
+    return (is_prime(n) && is_prime(n+2));
 }
 
 std::vector<int> primes_in_range(int start, int end)
 {
-    if (end < 2 || start > end) return {};
+    if (end < 2 || start > end)
+    {
+        return {};
+    }
     std::vector<bool> is_prime(end + 1, true);
     for (int denom_eratosphene = 2; denom_eratosphene <= std::sqrt(end); ++denom_eratosphene)
     {
@@ -127,24 +133,33 @@ int main()
     try
     {
         bool result_is_prime = is_prime(number);
-        if (result_is_prime == true)
+        if (result_is_prime)
         {
             std::cout << number << " is prime\n";
         }
         next_prime(number);
-
-        bool result_is_twin_prime = is_twin_prime(number);
-        if (result_is_twin_prime == true)
+        try
         {
-            std::cout << number << " and " << number+2 << " are twin primes\n";
+            bool result_is_twin_prime = is_twin_prime(number);
+            if (result_is_twin_prime)
+            {
+                std::cout << number << " and " << number+2 << " are twin primes\n";
+            }
+        }
+        catch (const std::invalid_argument& e)
+        {
+            std::cerr << "Mistake: " << e.what() << '\n';
         }
 
         std::cout << "enter a range of prime numbers: ";
         std::cin >> start >> end;
+
         std::vector<int> result_primes_in_range = primes_in_range(start, end);
+        unsigned int size_result_primes_in_range = result_primes_in_range.size();
+
         std::cout << "prime numbers from the range:\n";
         std::cout << '[';
-        for(int prime_value = 0; prime_value< result_primes_in_range.size(); ++prime_value)
+        for(int prime_value = 0; prime_value < size_result_primes_in_range; ++prime_value)
         {
             std::cout << result_primes_in_range[prime_value];
             if (prime_value < result_primes_in_range.size() - 1)
@@ -154,7 +169,11 @@ int main()
         }
         std::cout << ']';
     }
-    catch(const std::invalid_argument& e)
+    catch (const std::invalid_argument& e)
+    {
+        std::cerr << "Mistake: " << e.what() << '\n';
+    }
+    catch (const std::out_of_range& e)
     {
         std::cerr << "Mistake: " << e.what() << '\n';
     }
