@@ -31,18 +31,18 @@
 #include <climits>
 #include <stdexcept>
 #include <cmath>
+#include <algorithm>
 
 bool is_prime(unsigned n)
 {
-    int max_number = INT_MAX - 18;
     unsigned int amount_of_denominators = 0;
-    unsigned int denom = 1;
+    unsigned int denom = 2;
     if (n < 2)
     {
-        throw std::invalid_argument("Number must be more than 2");
+        throw std::invalid_argument("Number must beat least 2");
     }
 
-    if (n > max_number)
+    if (n > INT_MAX - 18)
     {
         throw std::out_of_range("Too large number to process");
     }
@@ -50,12 +50,12 @@ bool is_prime(unsigned n)
     unsigned int limit_n = std::sqrt(n);
     while (denom <= limit_n)
     {
-        denom++;
         if (n % denom == 0)
         {
             amount_of_denominators++;
             break;
         }
+        denom++;
     }
 
     return (amount_of_denominators == 0);
@@ -63,47 +63,53 @@ bool is_prime(unsigned n)
 
 int next_prime(unsigned n)
 {
-    bool result_is_prime = is_prime(n);
-    if (result_is_prime)
+    if (n > INT_MAX - 18)
     {
-        unsigned int next_prime_number = n+2;
-        while (!is_prime(next_prime_number))
+        throw std::out_of_range("Number is too close to INT_MAX");
+    }
+    unsigned next_number = n + 1;
+    while (next_number <= INT_MAX)
+    {
+        if (is_prime(next_number))
         {
-            next_prime_number++;
+            return next_number;
         }
-        std::cout << "next prime: " << next_prime_number << '\n';
-        return next_prime_number;
+        else
+        {
+            ++next_number;
+        }
     }
-    else
-    {
-        std::cout << "There is no next prime number for this :(\n";
-    }
-    return 0;
+    throw std::out_of_range("No next prime number for this...sorry..");
 }
 
 bool is_twin_prime(unsigned n)
 {
+    if (n > INT_MAX - 18)
+    {
+        throw std::out_of_range("Number is too large to proceed");
+    }
     if (!is_prime(n))
     {
-        throw std::invalid_argument("Don't work with non-prime number");
+        throw std::invalid_argument("is_twin_prime function doesn't work with non-prime number");
     }
-
-    return (is_prime(n) && is_prime(n+2));
+    return (is_prime(n+2));
 }
 
-std::vector<int> primes_in_range(int start, int end)
+std::vector<int> primes_in_range(unsigned start, unsigned end)
 {
     if (end < 2 || start > end)
     {
         return {};
     }
     std::vector<bool> is_prime(end + 1, true);
-    for (int denom_eratosphene = 2; denom_eratosphene <= std::sqrt(end); ++denom_eratosphene)
+    is_prime[0] = is_prime[1] = false;
+    unsigned limit_of_filtration = std::sqrt(end);
+    for (unsigned denom_eratosphene = 2; denom_eratosphene <= limit_of_filtration; ++denom_eratosphene)
     {
         if (is_prime[denom_eratosphene])
         {
-            int start_multiplicity = std::max(denom_eratosphene * denom_eratosphene, (start + denom_eratosphene - 1) / denom_eratosphene * denom_eratosphene);
-            for (int i = start_multiplicity; i <= end; i += denom_eratosphene)
+            unsigned start_multiplicity = std::max(denom_eratosphene * denom_eratosphene, ((start + denom_eratosphene - 1) / denom_eratosphene) * denom_eratosphene);
+            for (unsigned i = start_multiplicity; i <= end; i += denom_eratosphene)
             {
                 is_prime[i] = false;
             }
@@ -111,8 +117,8 @@ std::vector<int> primes_in_range(int start, int end)
     }
 
     std::vector<int> prime_massive;
-    int true_start = std::max(start, 2);
-    for (int i = true_start; i <= end; ++i)
+    unsigned true_start = std::max(start, 2u);
+    for (unsigned i = true_start; i <= end; ++i)
     {
         if (is_prime[i])
         {
@@ -136,6 +142,10 @@ int main()
         if (result_is_prime)
         {
             std::cout << number << " is prime\n";
+        }
+        else
+        {
+            std::cout << number << " isn't prime\n";
         }
         next_prime(number);
         try
@@ -169,11 +179,7 @@ int main()
         }
         std::cout << ']';
     }
-    catch (const std::invalid_argument& e)
-    {
-        std::cerr << "Mistake: " << e.what() << '\n';
-    }
-    catch (const std::out_of_range& e)
+    catch (const std::exception& e)
     {
         std::cerr << "Mistake: " << e.what() << '\n';
     }
