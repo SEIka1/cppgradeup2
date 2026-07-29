@@ -39,7 +39,7 @@ bool is_prime(unsigned n)
     unsigned int denom = 2;
     if (n < 2)
     {
-        throw std::invalid_argument("Number must beat least 2");
+        throw std::invalid_argument("Number must be at least 2");
     }
 
     if (n > INT_MAX - 18)
@@ -52,13 +52,10 @@ bool is_prime(unsigned n)
     {
         if (n % denom == 0)
         {
-            amount_of_denominators++;
-            break;
+            return false;
         }
-        denom++;
     }
-
-    return (amount_of_denominators == 0);
+    return true;
 }
 
 int next_prime(unsigned n)
@@ -67,7 +64,19 @@ int next_prime(unsigned n)
     {
         throw std::out_of_range("Number is too close to INT_MAX");
     }
-    unsigned next_number = n + 1;
+    if (n == 2)
+    {
+        return 3;
+    }
+    unsigned next_number = n;
+    if (n % 2 == 0)
+    {
+        next_number += 1;
+    }
+    else
+    {
+        next_number += 2;
+    }
     while (next_number <= INT_MAX)
     {
         if (is_prime(next_number))
@@ -76,7 +85,7 @@ int next_prime(unsigned n)
         }
         else
         {
-            ++next_number;
+            next_number += 2;
         }
     }
     throw std::out_of_range("No next prime number for this...sorry..");
