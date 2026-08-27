@@ -35,14 +35,13 @@
 
 bool is_prime(unsigned n)
 {
-    unsigned int amount_of_denominators = 0;
     unsigned int denom = 2;
     if (n < 2)
     {
         throw std::invalid_argument("Number must be at least 2");
     }
 
-    if (n > INT_MAX - 18)
+    if (n > UINT_MAX - 18)
     {
         throw std::out_of_range("Too large number to process");
     }
@@ -57,7 +56,7 @@ bool is_prime(unsigned n)
 
 int next_prime(unsigned n)
 {
-    if (n > INT_MAX - 18)
+    if (n > UINT_MAX - 18)
     {
         throw std::out_of_range("Number is too close to INT_MAX");
     }
@@ -74,7 +73,7 @@ int next_prime(unsigned n)
     {
         next_number += 2;
     }
-    while (next_number <= INT_MAX)
+    while (next_number <= UINT_MAX)
     {
         if (is_prime(next_number))
         {
@@ -90,7 +89,7 @@ int next_prime(unsigned n)
 
 bool is_twin_prime(unsigned n)
 {
-    if (n > INT_MAX - 18)
+    if (n > UINT_MAX - 18)
     {
         throw std::out_of_range("Number is too large to proceed");
     }
