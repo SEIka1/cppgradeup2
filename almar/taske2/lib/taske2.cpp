@@ -47,10 +47,13 @@ bool is_prime(unsigned n)
     }
 
     unsigned int limit_n = std::sqrt(n);
+    for (denom; denom <= limit_n; ++denom)
+    {
         if (n % denom == 0)
         {
             return false;
         }
+    }
     return true;
 }
 
