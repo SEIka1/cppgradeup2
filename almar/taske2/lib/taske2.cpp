@@ -41,25 +41,26 @@ bool is_prime(unsigned n)
         throw std::invalid_argument("Number must be at least 2");
     }
 
-    if (n > UINT_MAX - 18)
+    if (n > INT_MAX - 18)
     {
         throw std::out_of_range("Too large number to process");
     }
 
     unsigned int limit_n = std::sqrt(n);
-    for (denom; denom <= limit_n; ++denom)
+    while (denom <= limit_n)
     {
         if (n % denom == 0)
         {
             return false;
         }
+        denom++;
     }
     return true;
 }
 
 int next_prime(unsigned n)
 {
-    if (n > UINT_MAX - 18)
+    if (n > INT_MAX - 18)
     {
         throw std::out_of_range("Number is too close to INT_MAX");
     }
@@ -76,23 +77,21 @@ int next_prime(unsigned n)
     {
         next_number += 2;
     }
-    while (next_number <= UINT_MAX)
+
+    if (is_prime(next_number))
     {
-        if (is_prime(next_number))
-        {
-            return next_number;
-        }
-        else
-        {
-            next_number += 2;
-        }
+        return next_number;
+    }
+    else
+    {
+        next_number += 2;
     }
     throw std::out_of_range("No next prime number for this...sorry..");
 }
 
 bool is_twin_prime(unsigned n)
 {
-    if (n > UINT_MAX - 18)
+    if (n > INT_MAX - 18)
     {
         throw std::out_of_range("Number is too large to proceed");
     }
