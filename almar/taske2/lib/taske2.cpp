@@ -48,13 +48,10 @@ bool is_prime(unsigned n)
     }
 
     unsigned int limit_n = std::sqrt(n);
-    while (denom <= limit_n)
-    {
         if (n % denom == 0)
         {
             return false;
         }
-    }
     return true;
 }
 
@@ -151,12 +148,13 @@ int main()
         if (result_is_prime)
         {
             std::cout << number << " is prime\n";
+            std::cout << "next prime: " << next_prime(number) << '\n';
         }
         else
         {
             std::cout << number << " isn't prime\n";
+            std::cout << "next prime: " << next_prime(number) << '\n';
         }
-        next_prime(number);
         try
         {
             bool result_is_twin_prime = is_twin_prime(number);
